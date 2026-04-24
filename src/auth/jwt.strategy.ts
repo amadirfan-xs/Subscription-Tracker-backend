@@ -8,24 +8,24 @@ import { User } from '@/users/entities/user.entity';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-    constructor(
-        private configService: ConfigService,
-        @InjectRepository(User)
-        private userRepository: Repository<User>,
-    ) {
-        super({
-            jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-            ignoreExpiration: false,
-            secretOrKey: configService.get<string>('JWT_SECRET') || 'default-secret',
-        });
-    }
+  constructor(
+    private configService: ConfigService,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
+  ) {
+    super({
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      ignoreExpiration: false,
+      secretOrKey: configService.get<string>('JWT_SECRET') || 'default-secret',
+    });
+  }
 
-    async validate(payload: any) {
-        const { sub: id } = payload;
-        const user = await this.userRepository.findOne({ where: { id } });
-        if (!user) {
-            throw new UnauthorizedException();
-        }
-        return user;
+  async validate(payload: any) {
+    const { sub: id } = payload;
+    const user = await this.userRepository.findOne({ where: { id } });
+    if (!user) {
+      throw new UnauthorizedException();
     }
+    return user;
+  }
 }

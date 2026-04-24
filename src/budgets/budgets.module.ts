@@ -5,9 +5,9 @@ import { BudgetsService } from './budgets.service';
 import { BudgetsController } from './budgets.controller';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Budget])],
-    providers: [BudgetsService],
-    controllers: [BudgetsController],
-    exports: [BudgetsService],
+  imports: [TypeOrmModule.forFeature([Budget])],
+  providers: [BudgetsService],
+  controllers: [BudgetsController],
+  exports: [BudgetsService],
 })
-export class BudgetsModule { }
+export class BudgetsModule {}

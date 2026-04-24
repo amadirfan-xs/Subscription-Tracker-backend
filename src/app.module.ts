@@ -14,7 +14,7 @@ import { SubscriptionsModule } from './subscriptions/subscriptions.module';
 import { BudgetsModule } from './budgets/budgets.module';
 import { Budget } from './budgets/entities/budget.entity';
 import { UsersModule } from './users/users.module';
-import { NotificationsModule } from './notifications/notifications.module';
+// import { NotificationsModule } from './notifications/notifications.module';
 import { MailModule } from './mail/mail.module';
 
 @Module({
@@ -32,7 +32,15 @@ import { MailModule } from './mail/mail.module';
         username: configService.get<string>('DB_USER'),
         password: configService.get<string>('DB_PASS'),
         database: configService.get<string>('DB_NAME'),
-        entities: [User, Subscription, UsageLog, PasswordReset, Budget, LoginSession],
+        ssl: { rejectUnauthorized: false },
+        entities: [
+          User,
+          Subscription,
+          UsageLog,
+          PasswordReset,
+          Budget,
+          LoginSession,
+        ],
         synchronize: true,
       }),
       inject: [ConfigService],
@@ -46,4 +54,4 @@ import { MailModule } from './mail/mail.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}

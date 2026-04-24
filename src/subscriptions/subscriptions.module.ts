@@ -6,8 +6,8 @@ import { Subscription } from './entities/subscription.entity';
 import { UsageLog } from './entities/usage-log.entity';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Subscription, UsageLog])],
-    providers: [SubscriptionService],
-    controllers: [SubscriptionsController],
+  imports: [TypeOrmModule.forFeature([Subscription, UsageLog])],
+  providers: [SubscriptionService],
+  controllers: [SubscriptionsController],
 })
-export class SubscriptionsModule { }
+export class SubscriptionsModule {}

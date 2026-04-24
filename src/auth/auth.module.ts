@@ -12,19 +12,19 @@ import { GoogleStrategy } from './google.strategy';
 import { LoginSession } from './entities/login-session.entity';
 
 @Module({
-    imports: [
-        TypeOrmModule.forFeature([User, PasswordReset, LoginSession]),
-        JwtModule.registerAsync({
-            imports: [ConfigModule],
-            useFactory: async (configService: ConfigService) => ({
-                secret: configService.get<string>('JWT_SECRET'),
-                signOptions: { expiresIn: '1h' as any },
-            }),
-            inject: [ConfigService],
-        }),
-    ],
-    providers: [AuthService, JwtStrategy, GoogleStrategy],
-    controllers: [AuthController],
-    exports: [AuthService],
+  imports: [
+    TypeOrmModule.forFeature([User, PasswordReset, LoginSession]),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET'),
+        signOptions: { expiresIn: '1h' as any },
+      }),
+      inject: [ConfigService],
+    }),
+  ],
+  providers: [AuthService, JwtStrategy, GoogleStrategy],
+  controllers: [AuthController],
+  exports: [AuthService],
 })
-export class AuthModule { }
+export class AuthModule {}
