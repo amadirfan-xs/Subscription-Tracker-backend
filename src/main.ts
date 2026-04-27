@@ -1,44 +1,44 @@
-import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
-import { NestExpressApplication } from '@nestjs/platform-express';
-import { join } from 'path';
-import { AppModule } from './app.module';
-import { ExpressAdapter } from '@nestjs/platform-express';
-import express from 'express';
-import serverlessExpress from '@vendia/serverless-express';
+import { config } from 'dotenv';
 
-let cachedServer;
+function getEnvFile(): string {
+  const env = process.env.NODE_ENV || '';
+  let envFile = '.env';
+  if (env !== '') {
+    envFile = `.env.${env.trim()}`;
+  }
+  return envFile;
+}
+
+config({ path: getEnvFile() });
+
+import bodyParser from 'body-parser';
+import { ValidationPipe } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { AppModule } from '@/app.module';
 
 async function bootstrap() {
-  const expressApp = express();
-  const adapter = new ExpressAdapter(expressApp);
-
-  const app = await NestFactory.create<NestExpressApplication>(
-    AppModule,
-    adapter,
-  );
-
-  app.enableCors();
-
+  const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
+      forbidNonWhitelisted: true,
       transform: true,
     }),
   );
 
-  app.useStaticAssets(join(__dirname, '..', 'uploads'), {
-    prefix: '/uploads/',
-  });
+  app.use(bodyParser.json({ limit: '10mb' }));
+  app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
+  app.enableCors({ origin: true, credentials: true });
 
-  await app.init();
+  const apiDoc = new DocumentBuilder()
+    .setTitle('API')
+    .setVersion('1.0')
+    .build();
 
-  return serverlessExpress({ app: expressApp });
+  const document = SwaggerModule.createDocument(app, apiDoc);
+  SwaggerModule.setup('/docs', app, document);
+
+  await app.listen(Number(process.env.PORT ?? 3000));
 }
-
-export default async function handler(req, res) {
-  if (!cachedServer) {
-    cachedServer = await bootstrap();
-  }
-  return cachedServer(req, res);
-}
+void bootstrap();
